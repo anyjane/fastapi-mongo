@@ -1,26 +1,18 @@
 from fastapi import APIRouter, Body
 
 from database.database import *
-from models.dealing import retrieve_dealings,retrieve_find_dealing
+from models.history import *
 from schemas.student import Response, UpdateStudentModel
 
 
 router = APIRouter()
 
 
-@router.get("/", response_description="Dealing retrieved", response_model=Response)
-async def get_dealings():
-    students = await retrieve_dealings()
-    return {
-        "status_code": 200,
-        "response_type": "success",
-        "description": "Dealings data retrieved successfully",
-        "data": students,
-    }
+
 
 @router.get("/{code}", response_description="Dealing data retrieved", response_model=Response)
-async def get_one_dealing(code: int):
-    student = await retrieve_find_dealing(code)
+async def get_history_list(code: int):
+    student = await retrieve_history_find_code(code, datetime.datetime.today(), 10)
     if student:
         return {
             "status_code": 200,
@@ -34,7 +26,21 @@ async def get_one_dealing(code: int):
         "description": "Student doesn't exist",
     }
 
-
+@router.get("/{code}/atr", response_description="Dealing data retrieved", response_model=Response)
+async def get_history_list(code: int, cycle: int = 14, end_date : datetime.date = datetime.datetime.now().date):
+    atr = await retrieve_history_atr(code, end_date, cycle)
+    if atr:
+        return {
+            "status_code": 200,
+            "response_type": "success",
+            "description": "Student data retrieved successfully",
+            "data": atr,
+        }
+    return {
+        "status_code": 404,
+        "response_type": "error",
+        "description": "Student doesn't exist",
+    }
 '''
 @router.post(
     "/",

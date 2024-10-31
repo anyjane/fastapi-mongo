@@ -5,6 +5,7 @@ from config.config import initiate_database
 from routes.admin import router as AdminRouter
 from routes.student import router as StudentRouter
 from routes.dealing import router as DealingRouter
+from routes.history import router as HistoryRouter
 
 app = FastAPI()
 
@@ -24,3 +25,4 @@ async def read_root():
 app.include_router(AdminRouter, tags=["Administrator"], prefix="/admin")
 app.include_router(StudentRouter,tags=["Students"],prefix="/student")
 app.include_router(DealingRouter,tags=["Dealings"],prefix="/dealing")
+app.include_router(HistoryRouter,tags=["History"],prefix="/history")

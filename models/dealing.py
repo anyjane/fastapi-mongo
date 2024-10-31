@@ -27,3 +27,8 @@ class Dealing(Document):
 async def retrieve_dealings() -> List[Dealing]:
     students = await Dealing.all().to_list()
     return students
+
+async def retrieve_find_dealing(code: int) -> List[Dealing]:
+    student = await Dealing.find({"code": {"$eq": code}}).to_list()
+    if student:
+        return student

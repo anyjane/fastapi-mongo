@@ -1,5 +1,12 @@
 <template>
 	<div class="container">
+		<div>
+			<el-radio-group v-model="radio_filter" size="large" @change="filter_change">
+				<el-radio-button label="全部" value="all" />
+				<el-radio-button label="持仓" value="hold" />
+				<el-radio-button label="已出" value="sold" />
+			</el-radio-group>
+		</div>
 		<TableCustom :columns="columns" :tableData="tableData" :hasToolbar="false" :hasPagination="false">
 			<template #code="{ rows }">
 				<el-input v-if="rows.editing" v-model="rows.code"></el-input>
@@ -64,19 +71,27 @@ let columns = ref([
 	{ prop: 'buy_date', label: '购入' },
 	{ prop: 'cost', label: '成本' },
 	{ prop: 'shares', label: '数目' },
-	{ prop: 'sell_date', label: '售出'},
-	{ prop: 'sell_price', label: '售价'},
+	{ prop: 'sell_date', label: '售出' },
+	{ prop: 'sell_price', label: '售价' },
 	{ prop: 'operator', label: '操作', width: 180 },
 ])
 const tableData = ref([]);
+const radio_filter = ref('all')
 const getData = async () => {
 	const res = await fetchUserData();
-	tableData.value = res.data.data;
+	tableData.value = [];
+	for (var item of res.data.data) {
+		if (radio_filter.value == 'all' || (radio_filter.value == 'hold' && !isNaN(item.sell_date)) || (radio_filter.value == 'sold' && isNaN(item.sell_date))) {
+			tableData.value.push(item);
+		}
+	}
 };
 getData();
 
 const rowData = ref({})
-
+const filter_change = (val) => {
+	getData();
+};
 const handleEdit = (row) => {
 	rowData.value = { ...row };
 	row.editing = true;

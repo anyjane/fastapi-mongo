@@ -9,7 +9,7 @@ export const fetchData = () => {
 
 export const fetchUserData = () => {
     return request({
-        url: './mock/user.json',
+        url: '/api/dealing',
         method: 'get'
     });
 };

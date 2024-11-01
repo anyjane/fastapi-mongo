@@ -1,24 +1,33 @@
 <template>
 	<div class="container">
 		<TableCustom :columns="columns" :tableData="tableData" :hasToolbar="false" :hasPagination="false">
+			<template #code="{ rows }">
+				<el-input v-if="rows.editing" v-model="rows.code"></el-input>
+				<span v-else>{{ rows.code }}</span>
+			</template>
 			<template #name="{ rows }">
 				<el-input v-if="rows.editing" v-model="rows.name"></el-input>
 				<span v-else>{{ rows.name }}</span>
 			</template>
-			<template #password="{ rows }">
-				<el-input v-if="rows.editing" v-model="rows.password"></el-input>
-				<span v-else>{{ rows.password }}</span>
+			<template #buy_date="{ rows }">
+				<el-input v-if="rows.editing" v-model="rows.buy_date"></el-input>
+				<span v-else>{{ rows.buy_date }}</span>
 			</template>
-			<template #email="{ rows }">
-				<el-input v-if="rows.editing" v-model="rows.email"></el-input>
-				<span v-else>{{ rows.email }}</span>
+			<template #cost="{ rows }">
+				<el-input v-if="rows.editing" v-model="rows.cost"></el-input>
+				<span v-else>{{ rows.cost }}</span>
 			</template>
-			<template #role="{ rows }">
-				<el-select v-if="rows.editing" v-model="rows.role">
-					<el-option label="管理员" value="管理员"></el-option>
-					<el-option label="普通用户" value="普通用户"></el-option>
-				</el-select>
-				<span v-else>{{ rows.role }}</span>
+			<template #volumn="{ rows }">
+				<el-input v-if="rows.editing" v-model="rows.volumn"></el-input>
+				<span v-else>{{ rows.volumn }}</span>
+			</template>
+			<template #sell_date="{ rows }">
+				<el-input v-if="rows.editing" v-model="rows.sell_date"></el-input>
+				<span v-else>{{ rows.sell_date }}</span>
+			</template>
+			<template #sell_price="{ rows }">
+				<el-input v-if="rows.editing" v-model="rows.sell_price"></el-input>
+				<span v-else>{{ rows.sell_price }}</span>
 			</template>
 			<template #operator="{ rows, index }">
 				<template v-if="!rows.editing">
@@ -50,16 +59,19 @@ import { fetchUserData } from '@/api/index';
 
 let columns = ref([
 	{ type: 'index', label: '序号', width: 55, align: 'center' },
-	{ prop: 'name', label: '用户名' },
-	{ prop: 'password', label: '密码' },
-	{ prop: 'email', label: '邮箱' },
-	{ prop: 'role', label: '角色' },
+	{ prop: 'code', label: '代码' },
+	{ prop: 'name', label: '名称' },
+	{ prop: 'buy_date', label: '购入' },
+	{ prop: 'cost', label: '成本' },
+	{ prop: 'volumn', label: '数目' },
+	{ prop: 'sell_date', label: '售出'},
+	{ prop: 'sell_price', label: '售价'},
 	{ prop: 'operator', label: '操作', width: 180 },
 ])
 const tableData = ref([]);
 const getData = async () => {
 	const res = await fetchUserData();
-	tableData.value = res.data.list;
+	tableData.value = res.data.data;
 };
 getData();
 

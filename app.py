@@ -19,7 +19,6 @@ async def start_database():
     await initiate_database()
 
 
-app.mount("/", StaticFiles(directory="static", html=True), name="/")
 # @app.get("/", tags=["Root"])
 # async def read_root():
 #     return {"message": "Welcome to this fantastic app."}
@@ -27,8 +26,9 @@ app.mount("/", StaticFiles(directory="static", html=True), name="/")
 
 app.include_router(AdminRouter, tags=["Administrator"], prefix="/admin")
 app.include_router(StudentRouter,tags=["Students"],prefix="/student")
-app.include_router(DealingRouter,tags=["Dealings"],prefix="/dealing")
-app.include_router(HistoryRouter,tags=["History"],prefix="/history")
+app.include_router(DealingRouter,tags=["Dealings"],prefix="/api/dealing")
+app.include_router(HistoryRouter,tags=["History"],prefix="/api/history")
+app.mount("/main", StaticFiles(directory="static", html=True), name="/")
 
 # 静态文件代理
 class RedirectToIndexMiddleware(BaseHTTPMiddleware):

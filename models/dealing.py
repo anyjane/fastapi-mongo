@@ -5,9 +5,11 @@ from pydantic import BaseModel, EmailStr
 class Dealing(Document):
     code: int
     name: str
-    time: datetime.date
-    shares: int 
+    buy_date: datetime.date
     cost: float
+    shares: int 
+    sell_date: Optional[datetime.date] = None
+    sell_price: Optional[float] = None
 
     class Config:
         json_schema_extra = {

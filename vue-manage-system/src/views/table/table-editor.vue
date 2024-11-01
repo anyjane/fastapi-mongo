@@ -17,9 +17,9 @@
 				<el-input v-if="rows.editing" v-model="rows.cost"></el-input>
 				<span v-else>{{ rows.cost }}</span>
 			</template>
-			<template #volumn="{ rows }">
-				<el-input v-if="rows.editing" v-model="rows.volumn"></el-input>
-				<span v-else>{{ rows.volumn }}</span>
+			<template #shares="{ rows }">
+				<el-input v-if="rows.editing" v-model="rows.shares"></el-input>
+				<span v-else>{{ rows.shares }}</span>
 			</template>
 			<template #sell_date="{ rows }">
 				<el-input v-if="rows.editing" v-model="rows.sell_date"></el-input>
@@ -63,7 +63,7 @@ let columns = ref([
 	{ prop: 'name', label: '名称' },
 	{ prop: 'buy_date', label: '购入' },
 	{ prop: 'cost', label: '成本' },
-	{ prop: 'volumn', label: '数目' },
+	{ prop: 'shares', label: '数目' },
 	{ prop: 'sell_date', label: '售出'},
 	{ prop: 'sell_price', label: '售价'},
 	{ prop: 'operator', label: '操作', width: 180 },

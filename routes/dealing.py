@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body
 
 from database.database import *
-from models.dealing import retrieve_dealings,retrieve_find_dealing
+from models.dealing import retrieve_dealings,retrieve_find_dealing, Dealing, add_dealing
 from schemas.student import Response, UpdateStudentModel
 
 
@@ -59,14 +59,13 @@ async def get_one_dealing(code: int):
     }
 
 
-'''
 @router.post(
     "/",
     response_description="Student data added into the database",
     response_model=Response,
 )
-async def add_student_data(student: Student = Body(...)):
-    new_student = await add_student(student)
+async def add_dealing_data(dealing: Dealing = Body(...)):
+    new_student = await add_dealing(dealing)
     return {
         "status_code": 200,
         "response_type": "success",
@@ -75,6 +74,7 @@ async def add_student_data(student: Student = Body(...)):
     }
 
 
+'''
 @router.delete("/{id}", response_description="Student data deleted from the database")
 async def delete_student_data(id: PydanticObjectId):
     deleted_student = await delete_student(id)

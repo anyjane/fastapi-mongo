@@ -20,6 +20,15 @@ export const fetchDealingDataMerge = () => {
         params: { type: 1 }
     });
 };
+export const newDealingData = (data: {}) => {
+    console.error('data', data);
+    return request({
+        url: '/api/dealing',
+        method: 'post',
+        data: data
+    });
+};
+
 export const fetchRoleData = () => {
     return request({
         url: './mock/role.json',

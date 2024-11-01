@@ -2,6 +2,7 @@
 	<div class="container">
 		<div>
 			<el-space direction="horizontal" :size="30">
+				<el-button type="warning" :icon="CirclePlusFilled" @click="dealingAddVisible = true">新增</el-button>
 				<el-radio-group v-model="radio_filter" size="large" @change="filter_change">
 					<el-radio-button label="全部" value="all" />
 					<el-radio-button label="持仓" value="hold" />
@@ -44,7 +45,7 @@
 			</template>
 			<template #operator="{ rows, index }">
 				<template v-if="!rows.editing">
-					<el-button type="primary" size="small" :icon="Edit" @click="handleEdit(rows)">
+					<el-button type="primary" size="small" :icon="Edit" @click="">
 						编辑
 					</el-button>
 					<el-button type="danger" size="small" :icon="Delete" @click="">
@@ -55,21 +56,51 @@
 					<el-button type="success" size="small" :icon="Select" @click="rows.editing = false">
 						保存
 					</el-button>
-					<el-button type="default" size="small" :icon="CloseBold" @click="handleCancel(rows, index)">
+					<el-button type="default" size="small" :icon="CloseBold" @click="">
 						取消
 					</el-button>
 				</template>
 			</template>
 		</TableCustom>
 	</div>
+	<el-dialog :title="'新增'" v-model="dealingAddVisible" width="700px" destroy-on-close :close-on-click-modal="false"
+		@close="closeDialog">
+		<el-form :model="formNewDealing" label-width="auto" style="max-width: 600px">
+			<el-form-item label="代码">
+				<el-input v-model="formNewDealing.code" />
+			</el-form-item>
+			<el-form-item label="名称">
+				<el-input v-model="formNewDealing.name" />
+			</el-form-item>
+			<el-form-item label="买入日期">
+				<el-date-picker v-model="formNewDealing.buy_date" type="date" value-format="YYYY-MM-DD" placeholder="Pick a date"
+					style="width: 100%" />
+			</el-form-item>
+			<el-form-item label="成本">
+				<el-input-number v-model="formNewDealing.cost" :step="0.001" />
+			</el-form-item>
+			<el-form-item label="数量">
+				<el-input-number v-model="formNewDealing.shares" :step="100" />
+			</el-form-item>
+		</el-form>
+		<template #footer>
+			<div class="dialog-footer">
+				<el-button @click="dealingAddVisible = false">Cancel</el-button>
+				<el-button type="primary" @click="confirmHandler">
+					Confirm
+				</el-button>
+			</div>
+		</template>
+	</el-dialog>
 </template>
 
 <script setup lang="ts" name="table-editor">
 import { ref } from 'vue';
-import { Delete, Edit, CloseBold, Select } from '@element-plus/icons-vue';
+import { Delete, Edit, CloseBold, Select, CirclePlusFilled } from '@element-plus/icons-vue';
 import TableCustom from '@/components/table-custom.vue';
-import { fetchUserData,fetchDealingDataMerge } from '@/api/index';
-
+import { fetchUserData, fetchDealingDataMerge, newDealingData } from '@/api/index';
+import { FormOption, FormOptionList } from '@/types/form-option';
+import { DealingItem } from '@/types/dealing';
 let columns = ref([
 	{ type: 'index', label: '序号', width: 55, align: 'center' },
 	{ prop: 'code', label: '代码' },
@@ -84,6 +115,14 @@ let columns = ref([
 const tableData = ref([]);
 const radio_filter = ref('all')
 const radio_filter2 = ref('no-merge')
+const dealingAddVisible = ref(false);
+const formNewDealing = ref({
+	code: 510000,
+	name: '',
+	buy_date: '',
+	cost: 1.0,
+	shares: 1000,
+})
 const getData = async () => {
 	var res;
 	if (radio_filter2.value == 'merge') {
@@ -100,18 +139,15 @@ const getData = async () => {
 };
 getData();
 
-const rowData = ref({})
 const filter_change = (val) => {
 	getData();
 };
-const handleEdit = (row) => {
-	rowData.value = { ...row };
-	row.editing = true;
+const closeDialog = () => {
+	dealingAddVisible.value = false;
 };
-
-const handleCancel = (row, index) => {
-	row.editing = false;
-	tableData.value[index] = { ...rowData.value };
+const confirmHandler = () => {
+	dealingAddVisible.value = false;
+	newDealingData(formNewDealing.value)
 };
 </script>
 

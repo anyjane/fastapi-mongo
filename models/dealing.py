@@ -34,3 +34,7 @@ async def retrieve_find_dealing(code: int) -> List[Dealing]:
     student = await Dealing.find({"code": {"$eq": code}}).to_list()
     if student:
         return student
+
+async def add_dealing(dealing: Dealing) -> Dealing:
+    student = await dealing.create()
+    return student

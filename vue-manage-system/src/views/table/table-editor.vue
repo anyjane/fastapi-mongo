@@ -1,11 +1,17 @@
 <template>
 	<div class="container">
 		<div>
-			<el-radio-group v-model="radio_filter" size="large" @change="filter_change">
-				<el-radio-button label="全部" value="all" />
-				<el-radio-button label="持仓" value="hold" />
-				<el-radio-button label="已出" value="sold" />
-			</el-radio-group>
+			<el-space direction="horizontal" :size="30">
+				<el-radio-group v-model="radio_filter" size="large" @change="filter_change">
+					<el-radio-button label="全部" value="all" />
+					<el-radio-button label="持仓" value="hold" />
+					<el-radio-button label="已出" value="sold" />
+				</el-radio-group>
+				<el-radio-group v-model="radio_filter2" size="large" @change="filter_change">
+					<el-radio-button label="同代码合并" value="merge" />
+					<el-radio-button label="常规" value="no-merge" />
+				</el-radio-group>
+			</el-space>
 		</div>
 		<TableCustom :columns="columns" :tableData="tableData" :hasToolbar="false" :hasPagination="false">
 			<template #code="{ rows }">
@@ -62,7 +68,7 @@
 import { ref } from 'vue';
 import { Delete, Edit, CloseBold, Select } from '@element-plus/icons-vue';
 import TableCustom from '@/components/table-custom.vue';
-import { fetchUserData } from '@/api/index';
+import { fetchUserData,fetchDealingDataMerge } from '@/api/index';
 
 let columns = ref([
 	{ type: 'index', label: '序号', width: 55, align: 'center' },
@@ -77,8 +83,14 @@ let columns = ref([
 ])
 const tableData = ref([]);
 const radio_filter = ref('all')
+const radio_filter2 = ref('no-merge')
 const getData = async () => {
-	const res = await fetchUserData();
+	var res;
+	if (radio_filter2.value == 'merge') {
+		res = await fetchDealingDataMerge();
+	} else {
+		res = await fetchUserData();
+	}
 	tableData.value = [];
 	for (var item of res.data.data) {
 		if (radio_filter.value == 'all' || (radio_filter.value == 'hold' && !isNaN(item.sell_date)) || (radio_filter.value == 'sold' && isNaN(item.sell_date))) {

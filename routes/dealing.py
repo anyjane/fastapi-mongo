@@ -9,8 +9,32 @@ router = APIRouter()
 
 
 @router.get("/", response_description="Dealing retrieved", response_model=Response)
-async def get_dealings():
-    students = await retrieve_dealings()
+async def get_dealings(type: int = 0):
+    students1 = await retrieve_dealings()
+    students = [] 
+    if(type == 1):
+        for stu in students1:
+            has_found = False
+            for stu_done in students:
+                if(stu.code==stu_done.code and 
+                   ((stu.sell_date is None and stu_done.sell_date is None) or 
+                    (stu.sell_date is not None and stu_done.sell_date is not None and stu.sell_date == stu_done.sell_date))):
+                    has_found = True
+                    shares_total = stu.shares+stu_done.shares
+                    values_total = stu.shares*stu.cost +stu_done.shares*stu_done.cost
+                    stu_done.cost = values_total/shares_total
+                    
+                    if stu.sell_date is not None:
+                        sell_values = stu.shares*stu.sell_price +stu_done.shares*stu_done.sell_price
+                        stu_done.sell_price = sell_values/shares_total
+                    stu_done.shares = shares_total
+
+                    break
+    
+            if not has_found:
+                students.append(stu)
+    else:
+        students = students1
     return {
         "status_code": 200,
         "response_type": "success",

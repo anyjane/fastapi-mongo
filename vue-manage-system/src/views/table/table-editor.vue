@@ -15,25 +15,26 @@
 			</el-space>
 		</div>
 		<TableCustom :columns="columns" :tableData="tableData" :hasToolbar="false" :hasPagination="false">
+			<template #_id="{ rows }">
+				<span >{{ rows._id }}</span>
+			</template>
 			<template #code="{ rows }">
-				<el-input v-if="rows.editing" v-model="rows.code"></el-input>
-				<span v-else>{{ rows.code }}</span>
+				<span >{{ rows.code }}</span>
 			</template>
 			<template #name="{ rows }">
-				<el-input v-if="rows.editing" v-model="rows.name"></el-input>
-				<span v-else>{{ rows.name }}</span>
+				<span >{{ rows.name }}</span>
 			</template>
 			<template #buy_date="{ rows }">
-				<el-input v-if="rows.editing" v-model="rows.buy_date"></el-input>
-				<span v-else>{{ rows.buy_date }}</span>
+				<span >{{ rows.buy_date }}</span>
 			</template>
 			<template #cost="{ rows }">
-				<el-input v-if="rows.editing" v-model="rows.cost"></el-input>
-				<span v-else>{{ rows.cost }}</span>
+				<span >{{ rows.cost }}</span>
+			</template>
+			<template #buy_cost="{ rows }">
+				<span >{{ rows.buy_cost }}</span>
 			</template>
 			<template #shares="{ rows }">
-				<el-input v-if="rows.editing" v-model="rows.shares"></el-input>
-				<span v-else>{{ rows.shares }}</span>
+				<span >{{ rows.shares }}</span>
 			</template>
 			<template #sell_date="{ rows }">
 				<el-input v-if="rows.editing" v-model="rows.sell_date"></el-input>
@@ -43,21 +44,19 @@
 				<el-input v-if="rows.editing" v-model="rows.sell_price"></el-input>
 				<span v-else>{{ rows.sell_price }}</span>
 			</template>
+			<template #sell_cost="{ rows }">
+				<el-input v-if="rows.editing" v-model="rows.sell_cost"></el-input>
+				<span v-else>{{ rows.sell_cost }}</span>
+			</template>
 			<template #operator="{ rows, index }">
 				<template v-if="!rows.editing">
-					<el-button type="primary" size="small" :icon="Edit" @click="">
+					<el-button type="primary" size="small" :icon="Edit" @click="rows.editing = true">
 						编辑
-					</el-button>
-					<el-button type="danger" size="small" :icon="Delete" @click="">
-						删除
 					</el-button>
 				</template>
 				<template v-else>
 					<el-button type="success" size="small" :icon="Select" @click="rows.editing = false">
 						保存
-					</el-button>
-					<el-button type="default" size="small" :icon="CloseBold" @click="">
-						取消
 					</el-button>
 				</template>
 			</template>
@@ -76,8 +75,11 @@
 				<el-date-picker v-model="formNewDealing.buy_date" type="date" value-format="YYYY-MM-DD" placeholder="Pick a date"
 					style="width: 100%" />
 			</el-form-item>
-			<el-form-item label="成本">
+			<el-form-item label="买入单价">
 				<el-input-number v-model="formNewDealing.cost" :step="0.001" />
+			</el-form-item>
+			<el-form-item label="买入交易成本">
+				<el-input-number v-model="formNewDealing.buy_cost" :step="0.01" />
 			</el-form-item>
 			<el-form-item label="数量">
 				<el-input-number v-model="formNewDealing.shares" :step="100" />
@@ -102,14 +104,17 @@ import { fetchUserData, fetchDealingDataMerge, newDealingData } from '@/api/inde
 import { FormOption, FormOptionList } from '@/types/form-option';
 import { DealingItem } from '@/types/dealing';
 let columns = ref([
-	{ type: 'index', label: '序号', width: 55, align: 'center' },
+	// { type: 'index', label: '序号', width: 55, align: 'center' },
+	{ prop: '_id', label: '交易编号' , width: 50},
 	{ prop: 'code', label: '代码' },
 	{ prop: 'name', label: '名称' },
-	{ prop: 'buy_date', label: '购入' },
-	{ prop: 'cost', label: '成本' },
+	{ prop: 'buy_date', label: '购入日期' },
+	{ prop: 'cost', label: '买入单价' },
+	{ prop: 'buy_cost', label: '买入交易成本' },
 	{ prop: 'shares', label: '数目' },
-	{ prop: 'sell_date', label: '售出' },
+	{ prop: 'sell_date', label: '售出日期' },
 	{ prop: 'sell_price', label: '售价' },
+	{ prop: 'sell_cost', label: '售出交易成本' },
 	{ prop: 'operator', label: '操作', width: 180 },
 ])
 const tableData = ref([]);
@@ -121,6 +126,7 @@ const formNewDealing = ref({
 	name: '',
 	buy_date: '',
 	cost: 1.0,
+	buy_cost: 5.0,
 	shares: 1000,
 })
 const getData = async () => {

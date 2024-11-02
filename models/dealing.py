@@ -8,8 +8,10 @@ class Dealing(Document):
     buy_date: datetime.date
     cost: float
     shares: int 
+    buy_cost: Optional[float] = None
     sell_date: Optional[datetime.date] = None
     sell_price: Optional[float] = None
+    sell_cost: Optional[float] = None
 
     class Config:
         json_schema_extra = {
